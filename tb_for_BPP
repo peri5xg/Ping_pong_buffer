@@ -1,0 +1,74 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+ENTITY tb_top IS
+END ENTITY;
+
+ARCHITECTURE sim OF tb_top IS
+
+    CONSTANT DATA_WIDTH : INTEGER := 23;
+    CONSTANT Block_size : INTEGER := 10;
+
+    SIGNAL clk : STD_LOGIC := '0';
+    SIGNAL rst : STD_LOGIC := '1';
+    SIGNAL enable : STD_LOGIC := '1';
+
+    SIGNAL a_data : STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+
+    SIGNAL test_completed : BOOLEAN := false;
+BEGIN
+
+    -- DUT
+    uut : ENTITY work.top
+        GENERIC MAP(
+            DATA_WIDTH => DATA_WIDTH,
+            Block_size => Block_size
+        )
+        PORT MAP(
+            clk => clk,
+            rst => rst,
+            enable => enable,
+            a_data => a_data
+        );
+
+    
+    clk_process : PROCESS
+    BEGIN
+        clk <= '0';
+        WAIT FOR 5 ns;
+        clk <= '1';
+        WAIT FOR 5 ns;
+        if test_completed then
+            wait; 
+        end if; 
+    END PROCESS;
+
+    -- Stimulus
+   stim_proc : PROCESS
+BEGIN
+
+    rst <= '1';
+    WAIT FOR 20 ns;
+
+    rst <= '0';
+    enable <= '1';
+
+    a_data <= "00000000000000011111011";
+
+    WAIT FOR 200 ns;
+
+    enable <= '0';
+    a_data <= "00000000000000011111000";
+
+    WAIT FOR 200 ns;
+
+    enable <= '1';
+    a_data <= "00000000000000011111000";
+
+    test_completed <= true;
+
+    WAIT;
+
+END PROCESS;
+END ARCHITECTURE;
