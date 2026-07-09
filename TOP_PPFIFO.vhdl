@@ -12,6 +12,7 @@ entity top is
         enable   : in std_logic;
 
         a_data   : in std_logic_vector(DATA_WIDTH-1 downto 0)
+       
     );
 end entity;
 

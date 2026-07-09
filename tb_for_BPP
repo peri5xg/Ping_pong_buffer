@@ -44,7 +44,7 @@ BEGIN
         end if; 
     END PROCESS;
 
-    -- Stimulus
+   
    stim_proc : PROCESS
 BEGIN
 

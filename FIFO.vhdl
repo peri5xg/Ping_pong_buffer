@@ -35,36 +35,41 @@ BEGIN
     write_ready <= write_ready_reg;
     write_size <= std_logic_vector(to_unsigned(Block_size, write_size'length));
 
-    PROCESS (clk)
-    BEGIN
+    PROCESS(clk)
+BEGIN
+    IF rising_edge(clk) THEN
+        IF rst = '1' THEN
+            write_ready_reg <= "01";
+            count_words <= (OTHERS => '0');
 
-        IF rising_edge(clk) THEN
-            IF rst = '1' THEN
-               
-                write_ready_reg <= (OTHERS => '0');
-                count_words <= (OTHERS => '0');
+        ELSE
 
-            ELSE
-                IF (write_ready_reg(0) = '1') AND (write_active(0) = '1') THEN -- 0 буфер готов к записи 
+            
+            IF (write_ready_reg(0) = '1') AND (write_active(0) = '1') THEN
 
-                    IF  count_words < to_unsigned(Block_size, count_words'length)  THEN
-                        count_words <= count_words + 1;
-                        buffer0(to_integer(count_words)) <= write_data;
-                    ELSE
-                        write_ready_reg <= "10";
-                        count_words <= (OTHERS => '0');
-                    END IF;
+                IF count_words < to_unsigned(Block_size, count_words'length) THEN
+                    BUFFER0(to_integer(count_words)) <= write_data;
+                    count_words <= count_words + 1;
                 ELSE
-                    IF  count_words < to_unsigned(Block_size, count_words'length) THEN
-                        count_words <= count_words + 1;
-                        buffer1(to_integer(count_words)) <= write_data;
-                    ELSIF (write_ready_reg(1) = '1') AND (write_active(1) = '1') THEN
-                        write_ready_reg <= "01";
-                        count_words <= (OTHERS => '0');
-
-                    END IF;
+                    write_ready_reg <= "10";
+                    count_words <= (OTHERS => '0');
                 END IF;
+
+
+            
+            ELSIF (write_ready_reg(1) = '1') AND (write_active(1) = '1') THEN
+
+                IF count_words < to_unsigned(Block_size, count_words'length) THEN
+                    BUFFER1(to_integer(count_words)) <= write_data;
+                    count_words <= count_words + 1;
+                ELSE
+                    write_ready_reg <= "01";
+                    count_words <= (OTHERS => '0');
+                END IF;
+
             END IF;
+
         END IF;
-    END PROCESS;
+    END IF;
+END PROCESS;
 END ARCHITECTURE;

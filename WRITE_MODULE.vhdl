@@ -14,7 +14,7 @@ ENTITY ppfifo_source IS
 
         a_data : IN STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0);
 
-        i_wr_rdy : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+        i_wr_rdy : IN STD_LOGIC_VECTOR(1 DOWNTO 0):="01";
         o_wr_act : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
         i_wr_size : IN STD_LOGIC_VECTOR(9 DOWNTO 0);--?
         --o_wr_stb  : out std_logic;
